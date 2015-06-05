@@ -20,17 +20,22 @@ import commands
 import math
 import imp
 
+import codecs
 
 
 from PyQt4 import QtCore, QtGui
 
 
 def writefileInit(n, ext):
-    f = open(n+ext, 'w')
+    
     if ext == ".sh":
+        f = codecs.open(n+ext, 'w', "utf-8")
         f.write("#!/bin/sh\n")
         f.write("PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin\n")
+        f.write("script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)\n")
+        f.write("cd ${script_dir}\n")
     elif ext == ".bat":
+        f = codecs.open(n+ext, 'w', "utf-8")
         f.write("cd /d %~dp0\n")
     return f
 
@@ -243,13 +248,17 @@ class MainWindow(QtGui.QMainWindow):
         fname = os.path.basename(filename)
         name, ext = os.path.splitext(fname)
         pname = os.path.basename(dname)
-
+        
         mkdName = dirname+"/"+pname
         if not os.path.exists(mkdName):
             os.mkdir(mkdName)
 
-        ddname = os.path.relpath(dname,dirname).replace("\\","/")
+        
+        
 
+        ddname = os.path.relpath(dname,mkdName).replace("\\","/")
+
+        
         
         for n in self.fileNameListWin:
             createFile(mkdName,n,".bat",ddname)
@@ -290,9 +299,13 @@ class MainWindow(QtGui.QMainWindow):
         
             
         scripts = []
+
+        
+        
         if self.curFile == "":
             self.fileListBox.clear()
             for c in clist:
+                
                 s = self.saveScriptFile(c,dname)
                 scripts.append(s)
                 c = os.path.relpath(c,dname).replace("\\","/")
@@ -302,7 +315,11 @@ class MainWindow(QtGui.QMainWindow):
             self.fileListBox.clear()
             for c in clist:
                 cn = os.path.relpath(curDname,dname)
-                cn = os.path.relpath(c,cn)
+                c = os.path.relpath(c,cn)
+                cn = os.path.relpath(dname,"./")
+                
+                cn = cn+"/"+c
+                
                 s = self.saveScriptFile(cn,dname)
                 scripts.append(s)
                 self.fileListBox.addItem(c)
