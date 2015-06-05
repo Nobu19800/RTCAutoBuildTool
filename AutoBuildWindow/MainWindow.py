@@ -44,7 +44,7 @@ def createBuildFile(dname, ext):
     if ext == ".sh":
         f.write("make install\n")
     elif ext == ".bat":
-        f.write("cmake --build . --config Release --target INSTALL\n")
+        f.write("cmake --build . --config Release --target install\n")
     f.close()
 
     
@@ -81,7 +81,10 @@ def createFile(dname, name, ext, path="./"):
     
     
     f = writefileInit(dname+"/"+filename,ext)
-    f.write("cmake "+path+" -G \""+name+"\"\n")
+    cmd = "cmake "+path+"/"+" -G \""+name+"\""
+    if ext == ".bat":
+        cmd += " -D CMAKE_INSTALL_PREFIX=\"C:/OpenRTM-aist\" " + path+"/"
+    f.write(cmd+"\n")
     f.close()
 
     
@@ -365,7 +368,7 @@ class MainWindow(QtGui.QMainWindow):
                 f.write(p+"/"+filename+ext+"\n")
             elif ext == ".bat":
                 p.replace("/","\\")
-                f.write(p+"\\"+filename+ext+"\n")
+                f.write("cmd /c "+p+"\\"+filename+ext+"\n")
             
         f.close()
         
