@@ -32,15 +32,18 @@ def writefileInit(n, ext):
         f = codecs.open(n+ext, 'w', "utf-8")
         f.write("#!/bin/sh\n")
         f.write("PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin\n")
-        f.write("script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)\n")
-        f.write("cd ${script_dir}\n")
+        #f.write("script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)\n")
+        #f.write("cd ${script_dir}\n")
+        f.write("cd `dirname $0`\n")
     elif ext == ".bat":
         f = codecs.open(n+ext, 'w', "utf-8")
         f.write("cd /d %~dp0\n")
     return f
 
 def createBuildFile(dname, ext):
-    f = writefileInit(dname+"/"+"Install",ext)
+    
+    #f = writefileInit(dname+"/"+"Install",ext)
+    f = writefileInit(os.path.join(dname,"Install"),ext)
     if ext == ".sh":
         f.write("make install\n")
     elif ext == ".bat":
@@ -48,7 +51,8 @@ def createBuildFile(dname, ext):
     f.close()
 
     
-    f = writefileInit(dname+"/"+"unInstall",ext)
+    #f = writefileInit(dname+"/"+"unInstall",ext)
+    f = writefileInit(os.path.join(dname,"unInstall"),ext)
     if ext == ".sh":
         f.write("make uninstall\n")
     elif ext == ".bat":
@@ -56,11 +60,14 @@ def createBuildFile(dname, ext):
     f.close()
 
     
-    f = writefileInit(dname+"/"+"BuildRelease",ext)
+    #f = writefileInit(dname+"/"+"BuildRelease",ext)
+    f = writefileInit(os.path.join(dname,"BuildRelease"),ext)
     f.write("cmake --build . --config Release\n")
     f.close()
 
-    f = writefileInit(dname+"/"+"BuildDebug",ext)
+    
+    #f = writefileInit(dname+"/"+"BuildDebug",ext)
+    f = writefileInit(os.path.join(dname,"BuildDebug"),ext)
     f.write("cmake --build . --config Debug\n")
     f.close()
 
@@ -80,7 +87,8 @@ def createFile(dname, name, ext, path="./"):
 
     
     
-    f = writefileInit(dname+"/"+filename,ext)
+    #f = writefileInit(dname+"/"+filename,ext)
+    f = writefileInit(os.path.join(dname,filename),ext)
     cmd = "cmake "+path+"/"+" -G \""+name+"\""
     if ext == ".bat":
         cmd += " -D CMAKE_INSTALL_PREFIX=\"C:/OpenRTM-aist\" " + path+"/"
