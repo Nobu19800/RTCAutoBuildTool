@@ -31,7 +31,7 @@ def writefileInit(n, ext):
     if ext == ".sh":
         f = codecs.open(n+ext, 'w', "utf-8")
         f.write("#!/bin/sh\n")
-        f.write("PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin\n")
+        #f.write("PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin\n")
         #f.write("script_dir=$(cd $(dirname ${BASH_SOURCE:-$0}); pwd)\n")
         #f.write("cd ${script_dir}\n")
         f.write("cd `dirname $0`\n")
