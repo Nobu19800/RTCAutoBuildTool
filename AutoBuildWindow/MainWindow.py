@@ -86,13 +86,24 @@ def createFile(dname, name, ext, path="./"):
     filename = getFileName(name)
 
     
-    
     #f = writefileInit(dname+"/"+filename,ext)
     f = writefileInit(os.path.join(dname,filename),ext)
     cmd = "cmake "+path+"/"+" -G \""+name+"\""
     if ext == ".bat":
         cmd += " -D CMAKE_INSTALL_PREFIX=\"C:/OpenRTM-aist\" " + path+"/"
     f.write(cmd+"\n")
+
+    xmlFile = os.path.join(path,"RTC.xml")
+    relPath = os.path.relpath(os.path.join(dname,xmlFile))
+    
+    if os.path.exists(relPath):
+        
+        if os.name == 'posix':
+            cmd = "cp " + xmlFile.replace("\\","/") + " " + "RTC.xml"
+        elif os.name == 'nt':
+            cmd = "copy " + xmlFile.replace("/","\\") + " " + "RTC.xml"
+        f.write(cmd+"\n")
+
     f.close()
 
     
