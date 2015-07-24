@@ -302,12 +302,14 @@ class MainWindow(QtGui.QMainWindow):
         fname = os.path.basename(filename)
         name, ext = os.path.splitext(fname)
         pname = os.path.basename(dname)
+        
         if name != pname:
             dname = dname + "/" + name
             if not os.path.exists(dname):
                 os.mkdir(dname)
+            
                 
-        f = open(dname+"/"+fname, "wb")
+        f = open(os.path.join(dname,fname), "wb")
         
         clist = []
         for c in range(0, self.fileListBox.count()):
@@ -375,7 +377,9 @@ class MainWindow(QtGui.QMainWindow):
         for n in self.fileNameListUnix:
             name = getFileName(n)
             self.writeScriptFile(name,".sh",dname,scripts)
-        
+
+        self.curFile = os.path.join(dname,fname)
+
     def writeScriptFile(self, filename, ext, dname, scripts):
         
         f = writefileInit(dname+"/"+filename,ext)
@@ -410,7 +414,7 @@ class MainWindow(QtGui.QMainWindow):
 	ba = str(fileName.toLocal8Bit())
 	
         self.saveFile(ba)
-        self.curFile = ba
+        #self.curFile = ba
         return True
 	
 	
