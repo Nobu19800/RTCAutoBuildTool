@@ -98,9 +98,9 @@ def createFile(dname, name, ext, path="./"):
     
     if os.path.exists(relPath):
         
-        if os.name == 'posix':
+        if ext == ".sh":
             cmd = "cp " + xmlFile.replace("\\","/") + " " + "RTC.xml"
-        elif os.name == 'nt':
+        elif ext == ".bat":
             cmd = "copy " + xmlFile.replace("/","\\") + " " + "RTC.xml"
         f.write(cmd+"\n")
 
