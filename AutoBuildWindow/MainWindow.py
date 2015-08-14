@@ -151,6 +151,8 @@ class MainWindow(QtGui.QMainWindow):
         self.mainLayout.addWidget(self.addButton)
         self.addButton.clicked.connect(self.addSlot)
 
+        self.addPath = "."
+
         self.remButton = QtGui.QPushButton(u"削除")
         self.mainLayout.addWidget(self.remButton)
         self.remButton.clicked.connect(self.remSlot)
@@ -169,7 +171,8 @@ class MainWindow(QtGui.QMainWindow):
 	
 
     def addSlot(self):
-        fileName = QtGui.QFileDialog.getOpenFileName(self,u"開く","","Text File (*.txt);;All Files (*)")
+        
+        fileName = QtGui.QFileDialog.getOpenFileName(self,u"開く",self.addPath,"Text File (*.txt);;All Files (*)")
         if fileName.isEmpty():
             return
         ba = str(fileName.toLocal8Bit())
@@ -181,6 +184,8 @@ class MainWindow(QtGui.QMainWindow):
 
         if self.fileListBox.findText(f) == -1:
             self.fileListBox.addItem(f)
+            
+        self.addPath = os.path.relpath(os.path.dirname(ba))
         #os.path.abspath(filename)
         #filename = os.path.abspath(filename)
         #dname = os.path.dirname(filename)
