@@ -2,8 +2,8 @@
 # -*- encoding: utf-8 -*-
 
 ##
-#   @file SettingRTCConf.py
-#   @brief 
+#   @file AutoBuild.py
+#   @brief ビルド自動化ツール
 
 
 
@@ -34,7 +34,7 @@ import AutoBuildWindow.MainWindow
 
         
 ##
-# @brief 
+# @brief メイン関数
 def main():
     
     app = QtGui.QApplication([""])

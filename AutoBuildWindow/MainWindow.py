@@ -2,8 +2,8 @@
 # -*- encoding: utf-8 -*-
 
 ##
-#   @file .py
-#   @brief 
+#   @file MainWindow.py
+#   @brief メインウインドウ
 
 
 
@@ -25,7 +25,11 @@ import codecs
 
 from PyQt4 import QtCore, QtGui
 
-
+##
+# @brief 書き込むファイルを開く
+# @param n ファイル本体名
+# @param ext 拡張子
+# @return ファイルストリーム
 def writefileInit(n, ext):
     
     if ext == ".sh":
@@ -40,6 +44,10 @@ def writefileInit(n, ext):
         f.write("cd /d %~dp0\n")
     return f
 
+##
+# @brief リリースビルド、デバッグビルド、インストール、アンインストールを行うバッチファイルを生成
+# @param dname ディレクトリパス
+# @param ext 拡張子
 def createBuildFile(dname, ext):
     
     #f = writefileInit(dname+"/"+"Install",ext)
@@ -71,6 +79,10 @@ def createBuildFile(dname, ext):
     f.write("cmake --build . --config Debug\n")
     f.close()
 
+##
+# @brief プロジェクト作成スクリプトのファイル名取得
+# @param name 名前
+# @return ファイル名
 def getFileName(name):
     tmp = name.split(" ")
     filaname = ""
@@ -81,6 +93,12 @@ def getFileName(name):
 
     return filaname
 
+##
+# @brief プロジェクト作成スクリプトの作成
+# @param dname ディレクトリパス
+# @param name 名前
+# @param ext 拡張子
+# @param path RTC.xmlの存在するディレクトリ
 def createFile(dname, name, ext, path="./"):
     
     filename = getFileName(name)
@@ -109,18 +127,22 @@ def createFile(dname, name, ext, path="./"):
     
     
 
+
 ##
-#バイナリファイルより文字読み込みする関数
-##
+# @brief バイナリファイルより文字読み込みする関数
+# @param ifs ファイルストリーム
+# @return 文字列
 def ReadString(ifs):
     s = struct.unpack("i",ifs.read(4))[0]
     a = ifs.read(s)
 
     return a
 
+
 ##
-#バイナリファイルに文字保存する関数
-##
+# @brief バイナリファイルに文字保存する関数
+# @param a 文字列
+# @param ofs ファイルストリーム
 def WriteString(a, ofs):
     
     a2 = a + "\0"
@@ -132,8 +154,14 @@ def WriteString(a, ofs):
     ofs.write(a2)
 
 
-
+##
+# @class MainWindow
+# @brief メインウインドウ
+#
 class MainWindow(QtGui.QMainWindow):
+    ##
+    # @brief コンストラクタ
+    # @param self
     def __init__(self):
         super(MainWindow, self).__init__()
 
@@ -168,8 +196,10 @@ class MainWindow(QtGui.QMainWindow):
                     "Visual Studio 12 2013","Visual Studio 14 2015 Win64","Visual Studio 14 2015"]
         self.fileNameListUnix = ["CodeBlocks - Unix Makefiles","Unix Makefiles"]
 
-	
 
+    ##
+    # @brief 追加ボタンのスロット
+    # @param self
     def addSlot(self):
         
         fileName = QtGui.QFileDialog.getOpenFileName(self,u"開く",self.addPath,"Text File (*.txt);;All Files (*)")
@@ -193,22 +223,26 @@ class MainWindow(QtGui.QMainWindow):
         #name, ext = os.path.splitext(fname)
         #pname = os.path.basename(dname)
         #os.path.relpath(compname).replace("\\","/")
-        
+
+    ##
+    # @brief 削除ボタンのスロット
+    # @param self
     def remSlot(self):
         self.fileListBox.removeItem(self.fileListBox.findText(self.fileListBox.currentText()))
         
+    
     ##
-    #アクションの作成の関数
-    ##
+    # @brief アクションの作成の関数
+    # @param self
     def createAction(self):
 
-	self.newAct = QtGui.QAction("&New...",self)
-	self.newAct.setShortcuts(QtGui.QKeySequence.New)
+        self.newAct = QtGui.QAction("&New...",self)
+        self.newAct.setShortcuts(QtGui.QKeySequence.New)
         self.newAct.triggered.connect(self.newFile)
         
 
 
-	self.openAct = QtGui.QAction("&Open...",self)
+        self.openAct = QtGui.QAction("&Open...",self)
         self.openAct.setShortcuts(QtGui.QKeySequence.Open)
         self.openAct.triggered.connect(self.open)
 
@@ -222,20 +256,23 @@ class MainWindow(QtGui.QMainWindow):
         self.saveAsAct.triggered.connect(self.saveAs)
 
     
+    
     ##
-    #メニューの作成の関数
-    ##
+    # @brief メニューの作成の関数
+    # @param self
     def createMenus(self):
 
-	self.fileMenu = self.menuBar().addMenu("&File")
-	self.fileMenu.addAction(self.newAct)
+        self.fileMenu = self.menuBar().addMenu("&File")
+        self.fileMenu.addAction(self.newAct)
         self.fileMenu.addAction(self.openAct)
         self.fileMenu.addAction(self.saveAct)
         self.fileMenu.addAction(self.saveAsAct)
 
 
     
-
+    ##
+    # @brief ダイアログで選択したファイルのパスを取得
+    # @param self
     def getFilePath(self):
         fileName = QtGui.QFileDialog.getOpenFileName(self,u"開く","","Config File (*.conf);;All Files (*)")
         if fileName.isEmpty():
@@ -246,9 +283,10 @@ class MainWindow(QtGui.QMainWindow):
 
         return ba
 
+    
     ##
-    #ファイル読み込みスロット
-    ##
+    # @brief ファイル読み込みスロット
+    # @param self
     def open(self):
         
         
@@ -268,7 +306,11 @@ class MainWindow(QtGui.QMainWindow):
         self.curFile = filepath
         
         
-        
+    ##
+    # @brief スクリプトファイルを生成
+    # @param self
+    # @param filename ファイル名
+    # @param dirname　ディレクトリパス
     def saveScriptFile(self, filename, dirname):
         filename = os.path.abspath(filename)
         dname = os.path.dirname(filename)
@@ -300,7 +342,11 @@ class MainWindow(QtGui.QMainWindow):
         createBuildFile(mkdName,".sh")
 
         return mkdName
-        
+
+    ##
+    # @brief ファイルを保存
+    # @param self
+    # @param filename ファイル名  
     def saveFile(self, filename):
         filename = os.path.abspath(filename)
         dname = os.path.dirname(filename)
@@ -385,6 +431,13 @@ class MainWindow(QtGui.QMainWindow):
 
         self.curFile = os.path.join(dname,fname)
 
+    ##
+    # @brief 指定したスクリプトファイルを実行するスクリプトファイルを生成
+    # @param self
+    # @param filename ファイル名
+    # @param ext 拡張子
+    # @param dname ディレクトリパス
+    # @param scripts スクリプトファイルのリスト
     def writeScriptFile(self, filename, ext, dname, scripts):
         
         f = writefileInit(dname+"/"+filename,ext)
@@ -399,7 +452,11 @@ class MainWindow(QtGui.QMainWindow):
                 f.write("cmd /c "+p+"\\"+filename+ext+"\n")
             
         f.close()
-        
+
+    ##
+    # @brief ファイル保存スロット
+    # @param self
+    # @return 成功でTrue、失敗でFalse
     def save(self):
         if self.curFile == "":
             return self.saveAs()
@@ -408,32 +465,37 @@ class MainWindow(QtGui.QMainWindow):
             return True
 
     ##
-    #ファイル保存のスロット
-    ##
+    # @brief 別名ファイル保存スロット
+    # @param self
+    # @return 成功でTrue、失敗でFalse
     def saveAs(self):
         
         fileName = QtGui.QFileDialog.getSaveFileName(self,u"保存", "","Config File (*.conf);;All Files (*)")
-	if fileName.isEmpty():
+        if fileName.isEmpty():
             return False
 
-	ba = str(fileName.toLocal8Bit())
-	
+        ba = str(fileName.toLocal8Bit())
+
         self.saveFile(ba)
         #self.curFile = ba
         return True
-	
+
 	
 
+    
     ##
-    #初期化のスロット
-    ##
+    # @brief 初期化のスロット
+    # @param self
     def newFile(self):
         self.curFile = ""
         self.fileListBox.clear()
 
 
         
-
+    ##
+    # @brief メッセージボックス表示
+    # @param self
+    # @param mes 表示する文字列
     def mesBox(self, mes):
         msgbox = QtGui.QMessageBox( self )
         msgbox.setText( mes )
